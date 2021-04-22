@@ -22,4 +22,20 @@ public interface Rectangle extends Geometry, HasGeometry {
     
     boolean isDoublePrecision();
 
+    @Override
+    default double minDistance(Rectangle r) {
+        if (!(r instanceof Point)) {
+            throw new UnsupportedOperationException("this method is not implemented");
+        }
+        return r.minDistance(this);
+    }
+
+    @Override
+    default double minMaxDistance(Rectangle r) {
+        if (!(r instanceof Point)) {
+            throw new UnsupportedOperationException("this method is not implemented");
+        }
+        return r.minMaxDistance(this);
+    }
+
 }
