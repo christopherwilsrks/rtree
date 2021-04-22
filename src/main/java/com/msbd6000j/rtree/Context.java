@@ -1,5 +1,7 @@
 package com.msbd6000j.rtree;
 
+import static com.msbd6000j.rtree.RTree.DEFAULT_BUCKET_SIZE;
+
 import com.github.davidmoten.guavamini.Preconditions;
 import com.msbd6000j.rtree.geometry.Geometry;
 
@@ -12,6 +14,7 @@ public final class Context<T, S extends Geometry> {
 
     private final int maxChildren;
     private final int minChildren;
+    private final int bucketSize;
     private final Splitter splitter;
     private final Selector selector;
     private final Factory<T, S> factory;
@@ -32,15 +35,22 @@ public final class Context<T, S extends Geometry> {
      */
     public Context(int minChildren, int maxChildren, Selector selector, Splitter splitter,
             Factory<T, S> factory) {
+        this(minChildren, maxChildren, DEFAULT_BUCKET_SIZE, selector, splitter, factory);
+    }
+
+    public Context(int minChildren, int maxChildren, int bucketSize, Selector selector,
+            Splitter splitter,
+            Factory<T, S> factory) {
         Preconditions.checkNotNull(splitter);
         Preconditions.checkNotNull(selector);
-        Preconditions.checkArgument(maxChildren > 2);
+        Preconditions.checkArgument(maxChildren >= 2);
         Preconditions.checkArgument(minChildren >= 1);
         Preconditions.checkArgument(minChildren < maxChildren);
         Preconditions.checkNotNull(factory);
         this.selector = selector;
         this.maxChildren = maxChildren;
         this.minChildren = minChildren;
+        this.bucketSize = bucketSize;
         this.splitter = splitter;
         this.factory = factory;
     }
@@ -51,6 +61,10 @@ public final class Context<T, S extends Geometry> {
 
     public int minChildren() {
         return minChildren;
+    }
+
+    public int bucketSize() {
+        return bucketSize;
     }
 
     public Splitter splitter() {
