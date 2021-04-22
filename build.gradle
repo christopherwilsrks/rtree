@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = '11'
+group 'com.6000j'
+version '1.0-SNAPSHOT'
+archivesBaseName='rtree'
+
+
+repositories {
+    mavenLocal()
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+// 获取本地仓库路径
+def localRepositoryPath = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+//打包至本地仓库配置
+
+uploadArchives {
+    repositories {
+        //mavenDeployer 需要依赖 apply plugin: 'maven'
+        mavenDeployer   {
+            repository(url: localRepositoryPath)
+            pom.project {
+                name = project.name      // 当前项目名称
+                version = project.version   //当前项目版本  0.0.1
+                groupId = project.group     //  当前项目组  com.xxx
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    compileOnly 'org.projectlombok:lombok:1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+    implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.9.0'
+    implementation group: 'com.github.davidmoten', name: 'guava-mini', version: '0.1.3'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
+}
+
+test {
+    useJUnitPlatform()
+}
