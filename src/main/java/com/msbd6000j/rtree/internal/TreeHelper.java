@@ -22,6 +22,9 @@ import lombok.Data;
  */
 public final class TreeHelper {
 
+    /**
+     * Store tree statistic information
+     * */
     @Builder
     @Data
     public static final class TreeStatics {
@@ -31,6 +34,9 @@ public final class TreeHelper {
         private final float utility;
     }
 
+    /**
+     * Store information for task 4 when applying knn method
+     * */
     @Builder
     @Data
     public static final class NNStatics {
@@ -43,6 +49,7 @@ public final class TreeHelper {
     }
 
     public static <T, S extends Geometry> TreeStatics calculateNonLeafSize(Node<T, S> root) {
+        // calculate tree information based on level traversal
         LinkedList<Node<T, S>> queue = new LinkedList<>();
         final int bucketSize = root.context().bucketSize();
         int cntLeaf = 0, cntNonLeaf = 0, cntOverlap = 0;
@@ -77,6 +84,8 @@ public final class TreeHelper {
 
         if (node instanceof NonLeaf) {
             // abl is a container storing either Point(p) or Rectangle(mbr)
+            // map is a container storing geometry -> node, since abl stores only point and mbr,
+            // map could help us to find mbr's corresponding node
             LinkedList<Geometry> abl = new LinkedList<>();
             HashMap<Geometry, Node<T, S>> map = new HashMap<>();
             NonLeaf<T, S> nonLeaf = (NonLeaf<T, S>) node;
@@ -88,6 +97,7 @@ public final class TreeHelper {
                 if (child instanceof NonLeaf) {
                     g = child.geometry();
                 } else {
+                    // if leaf node, replace it with the nearest point among the bucket
                     builder.cntPointCal(builder.cntPointCal + child.count());
                     g = calBestNNFromLeaf(p, (Leaf<T, S>) child);
                     g.mbr();
@@ -119,8 +129,14 @@ public final class TreeHelper {
                         // pruning rule 3
                         builder.cntPointCal(builder.cntPointCal + abl.size() - 1);
                         abl.removeIf(
-                                geometry -> _g != geometry && !(geometry instanceof Point) && p.minDistance(
-                                        geometry.mbr()) > p.distance(_g.mbr()));
+                                geometry -> {
+                                    boolean shouldRemove = _g != geometry && !(geometry instanceof Point) && p.minDistance(
+                                            geometry.mbr()) > p.distance(_g.mbr());
+                                    if (shouldRemove) {
+                                        builder.cntPruned(builder.cntPruned + 1);
+                                    }
+                                    return shouldRemove;
+                                });
                     }
                 } else if (g1 instanceof Point && g2 instanceof Point) {
                     // both are points, surely we can remove one of them

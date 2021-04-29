@@ -50,11 +50,11 @@ public final class LeafHelper {
         Context<T, S> context = leaf.context();
         @SuppressWarnings("unchecked")
         final List<Entry<T, S>> entries2 = Util.add(entries, (Entry<T, S>) entry);
-        if (entries2.size() <= context.maxChildren())
+        if (entries2.size() <= context.bucketSize())
             return Collections
                     .singletonList((Node<T, S>) context.factory().createLeaf(entries2, context));
         else {
-            ListPair<Entry<T, S>> pair = context.splitter().split(entries2, context.minChildren());
+            ListPair<Entry<T, S>> pair = context.splitter().split(entries2, context.bucketSize());
             return makeLeaves(pair, context);
         }
     }
