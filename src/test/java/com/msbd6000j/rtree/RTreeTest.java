@@ -40,14 +40,13 @@ class RTreeTest {
             float y = Float.parseFloat(split[1]);
             tree = tree.add(idx++, Geometries.point(x, y));
         }
-        System.out.printf(
-                "========================  maxChildren: %d\tbucketSize: " +
+        System.out.printf(                "========================  maxChildren: %d\tbucketSize: " +
                         "%d  =========================\n",
                 d, n);
         System.out.println("init " + (System.currentTimeMillis() - start) + "ms");
         System.out.println("tree height:\t" + tree.calculateDepth());
         tree.root().ifPresent(root -> {
-            TreeHelper.TreeStatics statics = TreeHelper.calculateNonLeafSize(tree.root().get());
+            TreeHelper.TreeStatics statics = TreeHelper.calculateTreeStatistics(tree.root().get());
             System.out.printf("NonLeaf: %d\tLeaf: %d\tUtility: %f\tOverlap: %d\n",
                               statics.getCntNonLeaf(), statics.getCntLeaf(), statics.getUtility(),
                               statics.getCntOverlap());
