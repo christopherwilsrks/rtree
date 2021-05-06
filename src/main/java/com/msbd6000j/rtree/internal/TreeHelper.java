@@ -48,7 +48,7 @@ public final class TreeHelper {
     private TreeHelper() {
     }
 
-    public static <T, S extends Geometry> TreeStatics calculateNonLeafSize(Node<T, S> root) {
+    public static <T, S extends Geometry> TreeStatics calculateTreeStatistics(Node<T, S> root) {
         // calculate tree information based on level traversal
         LinkedList<Node<T, S>> queue = new LinkedList<>();
         final int bucketSize = root.context().bucketSize();
